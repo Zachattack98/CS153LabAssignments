@@ -16,8 +16,11 @@ sys_fork(void)
 int
 sys_exit(void)
 {
-  exit();
-  return 0;  // not reached
+  int exitStat;
+  argint(0, &exitStat); //assign zero to address of new status variable
+                        //before providing it in the parameter of exit()
+  exit(exitStat);
+  //return 0;  // not needed exit now returns an exit status
 }
 
 int
