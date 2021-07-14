@@ -14,20 +14,34 @@ sys_fork(void)
 }
 
 int
-sys_exit(void)
-{
-  int exitStat;
-  argint(0, &exitStat); //assign zero to address of new status variable
-                        //before providing it in the parameter of exit()
-  exit(exitStat);
-  //return 0;  // not needed exit now returns an exit status
-}
-
-int
 sys_wait(void)
 {
   return wait();
 }
+
+int
+sys_wait2(void)
+{
+  int *waitStat;
+  argptr(0, (char**)&waitStat, sizeof(waitStat)); //assign new status pointer to address 0 for wait()
+                                                  //before providing it in the parameter of wait()
+  return wait2(waitStat);  //returning pointer after using it as a parameter
+}
+
+int
+sys_waitpid(void)
+{
+  int pid;
+  int *waitStat;
+  int options;
+  //assign all variables to three different addresses for waitpid() beforehand
+  argint(0, &pid);
+  argptr(1, (char**)&waitStat, sizeof(waitStat)); 
+  argint(2, &options);
+
+  return waitpid(pid, waitStat, options);  //returning pointer after using it as a parameter
+}
+//***************************************
 
 int
 sys_kill(void)
