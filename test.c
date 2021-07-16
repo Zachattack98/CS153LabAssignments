@@ -8,7 +8,7 @@ int stdout = 1;
 int main(int argc, char *argv[]) {
     //begin testing status pointer with wait2
     if(fork() == 0) {   //implement simple fork() as condition
-        sleep(2);
+        sleep(2);   //sleeps for only 2 seconds
         exit(25);   //can be any value
     }
     else {
