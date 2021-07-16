@@ -31,4 +31,109 @@ int main(int argc, char *argv[]) {
     }
 
     exit(0);
+
+
+
+
+
+    /*printf(1, "This is the test program for CS153 Lab1\n\n"); // fd=1 means standard output.
++
++  int child1_pid, child2_pid, child3_pid;
++  int child1_return, child2_return, child3_return, no_child_return;
++  int child1_exit, child2_exit; //, child3_exit;
++
++  printf(1, "Tests for exit(int status) and wait(int* status)...\n");
++  child1_pid = fork();
++  if (!child1_pid) { //child1
++    printf(1, "Child 1 - Child 1's pid: %d\n", getpid());
++    printf(1, "Child 1 - Exiting with status 10...\n");
++    exit(10);
++  }
++  else if (child1_pid > 0) { //Parent
++    child1_return = wait(&child1_exit);
++    printf(1, "Parent - Child 1's return pid: %d\n", child1_return);
++    printf(1, "Parent - Child 1's exit status: %d\n\n", child1_exit);
++  }
++
++  child2_pid = fork();
++  if (!child2_pid) {  //child2
++    printf(1, "Child 2's pid: %d\n", getpid());
++    printf(1, "Child 2 exiting with status 20...\n");
++    exit(20);
++  }
++  else if (child2_pid > 0) { //Parent
++    child2_return = wait(&child2_exit);
++    printf(1, "Parent - Child 2's return pid: %d\n", child2_return);
++    printf(1, "Parent - Child 2's exit status: %d\n\n", child2_exit);
++  }
++
++  child3_pid = fork();
++  if (!child3_pid) { //child3
++    printf(1, "Child 3's pid: %d\n", getpid());
++    printf(1, "Child 3 exiting with status 30...\n");
++    exit(30);
++  }
++  else if (child3_pid > 0) { //Parent
++    int* child3_null = NULL;
++    child3_return = wait(child3_null);
++    printf(1, "Parent - Child 3's return pid: %d\n", child3_return);
++    if (child3_null == NULL)
++      printf(1, "Parent - Child 3's exit status: NULL\n\n");
++    else
++      printf(1, "Parent - Child 3's exit status: %d\n\n", child3_null);
++  }
++
++  int* no_child = NULL;
++  no_child_return = wait(no_child);
++  printf(1, "Parent - No Child's return pid: %d\n", no_child_return);
++  if (no_child == NULL)
++    printf(1, "Parent - No Child's exit status: NULL\n\n");
++  else
++    printf(1, "Parent - No Child's exit status: %d\n\n", no_child);
++
++  
++  printf(1, "\nTests for waitpid(int pid, int* status, int option)...\n");
++
++  int return_pid, exit_status;
++  int pids[5]={0, 0, 0, 0, 0};
++
++  int i;
++  for (i = 0; i <5; i++) {
++    pids[i] = fork();
++
++    if (!pids[i]) { // Children
++      printf(1, "Child %d - pid: %d, exit status: %d\n", i, getpid(), (i+1)*100);
++      sleep(5 + 5 * i);
++      exit((i+1)*100);
++    }
++  }
++
++  printf(1, "\nSParent - Waiting process w/ pid %d\n", 1, pids[1]);
++  return_pid = waitpid(pids[1], &exit_status, 0);
++  printf(1, "Parent - Child %d exited, returned pid: %d, exit status %d\n\n", 1, return_pid, exit_status);
++
++  printf(1, "Parent - Waiting process w/ pid %d\n", 4, pids[4]);
++  return_pid = waitpid(pids[4], &exit_status, 0);
++  printf(1, "Parent - Child %d exited, returned pid: %d, exit status %d\n\n ", 4, return_pid, exit_status);
++
++  printf(1, "Parent - Waiting process w/ pid %d\n", 3, pids[3]);
++  return_pid = waitpid(pids[3], &exit_status, 0);
++  printf(1, "Parent - Child %d exited, returned pid: %d, exit status %d\n\n ", 3, return_pid, exit_status);
++
++  printf(1, "Parent - Waiting process w/ pid %d\n", 0, pids[0]);
++  return_pid = waitpid(pids[0], &exit_status, 0);
++  printf(1, "Parent - Child %d exited, returned pid: %d, exit status %d\n\n ", 0, return_pid, exit_status);
++
++  printf(1, "Parent - Waiting process w/ pid %d\n", 2, pids[2]);
++  return_pid = waitpid(pids[2], &exit_status, 0);
++  printf(1, "Parent - Child %d exited, returned pid: %d, exit status %d\n\n ", 2, return_pid, exit_status);
++
++
++  printf(1, "Parent - Waiting process w/ pid %d\n", 1, 999);
++  return_pid = waitpid(999, &exit_status, 0);
++  printf(1, "Parent - Child %d exited, returned pid: %d, exit status %d\n", 4, return_pid, exit_status);
++
++  exit(0);
+*/
+
 }

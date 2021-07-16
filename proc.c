@@ -261,10 +261,10 @@ exit(int status)
     }
   }
 
-  //************************
+  //changed************************
   //Store the current process as the exit status of the termination process
   curproc->exitStatus = status;
-  //************************
+  //changed************************
   sched();
   panic("zombie exit");
 }
@@ -332,12 +332,13 @@ wait2(int* status)
       if(p->state == ZOMBIE){
         // Found one.
 
-        //***************************************************
+        //changed***************************************************
+        //If int* status is not zero, pass the child's exit status
         if(status != 0) {
           *status = p->exitStatus;  //status pointer now equals the exit status
         }
-        printf("Status in Kernel (wait): %d\n", *status);
-        //***************************************************
+        printf("Status in Kernel (wait (1)): %d\n", *status);
+        //changed***************************************************
 
         pid = p->pid;
         kfree(p->kstack);
@@ -364,7 +365,7 @@ wait2(int* status)
   }
 }
 
-//**************************************
+//changed**************************************
 int waitpid(int wtpid, int *status, int options) {
   struct proc *p;
   int havekids, pid;
@@ -376,18 +377,18 @@ int waitpid(int wtpid, int *status, int options) {
     havekids = 0;
 
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    //*********************************************************************************
+    //changed*********************************************************************************
       cprintf("pid: %d  waitpid: %d\n", p->pid, wtpid); //display both pids to see any differences or similarities
       if(p->pid != wtpid)    //change statement to compare the previous pid with that of waitpid
         continue;
-    //*********************************************************************************
+    //changed*********************************************************************************
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
         if(status != 0) {
           *status = p->exitStatus;  //status pointer now equals the exit status
         }
-        cprintf("Status in Kernel (waitpid): %d\n", *status);   //changed pid to waitpid to determine location of output
+        cprintf("Status in Kernel (waitpid (1)): %d\n", *status);   //changed pid to waitpid to determine location of output
 
         pid = p->pid;
         kfree(p->kstack);
@@ -413,7 +414,7 @@ int waitpid(int wtpid, int *status, int options) {
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
-//**************************************
+//changed**************************************
 
 //PAGEBREAK: 42
 // Per-CPU process scheduler.

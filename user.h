@@ -4,9 +4,10 @@ struct rtcdate;
 // system calls
 int fork(void);
 //****************************************
-int exit2(void) __attribute__((noreturn));
-void exit(int);
+int exit(int) __attribute__((noreturn));
+//void exit(void) __attribute__((noreturn));
 int wait2(int*);
+int waitpid(int, int*, int);
 //****************************************
 int wait(void);
 int pipe(int*);
@@ -41,3 +42,7 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
+
+#ifndef __NULL__
+#define NULL ((void*) 0)
+#endif //__NULL__

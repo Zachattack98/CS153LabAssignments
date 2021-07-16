@@ -105,10 +105,10 @@ int             pipewrite(struct pipe*, char*, int);
 // proc.c
 int             cpuid(void);
 //****************************************
-void            exit(int);
+void            exit(int);  //changed
 int             wait(void);
-int             wait2(int*);
-int             waitpid(int, int*, int);
+int             wait2(int*);    //changed
+int             waitpid(int, int*, int);    //added
 //****************************************
 int             fork(void);
 int             growproc(int);

@@ -13,12 +13,24 @@ sys_fork(void)
   return fork();
 }
 
+//changed***************************************
+int
+sys_exit(void)
+{
+  int exitStat;
+  argint(0, &exitStat); //assign new exit status to address 0 for exit()
+                        //before providing it in the parameter of exit()
+  exit(exitStat);
+}
+//changed***************************************
+
 int
 sys_wait(void)
 {
   return wait();
 }
 
+//changed***************************************
 int
 sys_wait2(void)
 {
@@ -41,7 +53,7 @@ sys_waitpid(void)
 
   return waitpid(pid, waitStat, options);  //returning pointer after using it as a parameter
 }
-//***************************************
+//changed***************************************
 
 int
 sys_kill(void)

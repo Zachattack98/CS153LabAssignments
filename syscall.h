@@ -2,8 +2,8 @@
 #define SYS_fork    1
 #define SYS_exit    2
 #define SYS_wait    3
-#define SYS_wait2   4 //newly added
-#define SYS_waitpid 5 //newly added
+#define SYS_wait2   4 //added
+#define SYS_waitpid 5 //added
 #define SYS_pipe    6
 #define SYS_read    7
 #define SYS_kill    8
