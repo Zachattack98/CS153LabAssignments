@@ -169,6 +169,7 @@ main(void)
     wait2(0); //changed
   }
   exit(0); //changed
+  return(0); //added
 }
 
 void

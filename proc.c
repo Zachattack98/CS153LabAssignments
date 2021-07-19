@@ -262,7 +262,7 @@ exit(int status)
   }
 
   //changed************************
-  //Store the current process as the exit status of the termination process
+  //Update the current process as the exit status of the termination process
   curproc->exitStatus = status;
   //changed************************
   sched();

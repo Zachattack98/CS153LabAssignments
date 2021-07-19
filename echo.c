@@ -9,5 +9,6 @@ main(int argc, char *argv[])
 
   for(i = 1; i < argc; i++)
     printf(1, "%s%s", argv[i], i+1 < argc ? " " : "\n");
-  exit2();
+  exit(0); //changed
+  return(0); //added
 }

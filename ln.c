@@ -12,4 +12,5 @@ main(int argc, char *argv[])
   if(link(argv[1], argv[2]) < 0)
     printf(2, "link %s %s: failed\n", argv[1], argv[2]);
   exit(0); //changed
+  return(0); //added
 }

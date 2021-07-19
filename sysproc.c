@@ -18,9 +18,11 @@ int
 sys_exit(void)
 {
   int exitStat;
-  argint(0, &exitStat); //assign new exit status to address 0 for exit()
-                        //before providing it in the parameter of exit()
+  if(argint(0, &exitStat) < 0) {  //assign new exit status to address 0 for exit() 
+    return -1;                    //to test if status is not less than 0.
+  }                               //before providing it in the parameter of exit().
   exit(exitStat);
+  return 0;         //not reached
 }
 //changed***************************************
 
@@ -35,8 +37,9 @@ int
 sys_wait2(void)
 {
   int *waitStat;
-  argptr(0, (char**)&waitStat, sizeof(waitStat)); //assign new status pointer to address 0 for wait()
-                                                  //before providing it in the parameter of wait()
+  if(argptr(0, (void*)&waitStat, sizeof(waitStat)) < 0) {   //assign new status pointer to address 0 for wait()
+    return -1;                                              //before providing it in the parameter of wait()
+  }                                               
   return wait2(waitStat);  //returning pointer after using it as a parameter
 }
 
@@ -47,9 +50,15 @@ sys_waitpid(void)
   int *waitStat;
   int options;
   //assign all variables to three different addresses for waitpid() beforehand
-  argint(0, &pid);
-  argptr(1, (char**)&waitStat, sizeof(waitStat)); 
-  argint(2, &options);
+  if (argint(0, &pid) < 0) {
+		return -1;
+	}
+	if (argptr(1, (void*)&waitStat, sizeof(waitStat)) < 0) {
+		return -1;
+	}
+  if (argint(2, &options) < 0) {
+		return -1;
+	}
 
   return waitpid(pid, waitStat, options);  //returning pointer after using it as a parameter
 }
