@@ -14,5 +14,5 @@ main(int argc, char **argv)
   for(i=1; i<argc; i++)
     kill(atoi(argv[i]));
   exit(0); //changed
-  return(0); //added
+  //return(0); //added
 }

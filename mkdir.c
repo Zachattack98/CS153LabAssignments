@@ -20,5 +20,5 @@ main(int argc, char *argv[])
   }
 
   exit(0); //changed
-  return(0); //added
+  //return(0); //added
 }

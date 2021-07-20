@@ -53,5 +53,5 @@ main(void)
 {
   forktest();
   exit(0);  //changed; successful exit
-  return(0); //added; return is neeed to finish main
+  //return(0); //added; return is neeeded to finish main
 }
