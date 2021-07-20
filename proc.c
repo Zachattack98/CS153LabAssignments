@@ -335,14 +335,6 @@ wait2(int* status)
       if(p->state == ZOMBIE){
         // Found one.
 
-        //changed***************************************************
-        //If int* status is not zero, pass the child's exit status
-        if(status != 0) {
-          *status = p->exitStatus;  //status pointer now equals the exit status
-        }
-        printf("Status in Kernel (wait (1)): %d\n", *status);
-        //changed***************************************************
-
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
@@ -352,6 +344,15 @@ wait2(int* status)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+
+        //changed***************************************************
+        //If int* status is not zero, pass the child's exit status
+        if(status != 0) {
+          *status = p->exitStatus;  //status pointer now equals the exit status
+        }
+        printf("Status in Kernel (wait (1)): %d\n", *status);
+        //changed***************************************************
+
         release(&ptable.lock);
         return pid;
       }
@@ -388,10 +389,6 @@ int waitpid(int wtpid, int *status, int options) {
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
-        if(status != 0) {
-          *status = p->exitStatus;  //status pointer now equals the exit status
-        }
-        cprintf("Status in Kernel (waitpid (1)): %d\n", *status);   //changed pid to waitpid to determine location of output
 
         pid = p->pid;
         kfree(p->kstack);
@@ -402,6 +399,12 @@ int waitpid(int wtpid, int *status, int options) {
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+
+        if(status != 0) {
+          *status = p->exitStatus;  //status pointer now equals the exit status
+        }
+        cprintf("Status in Kernel (waitpid (1)): %d\n", *status);   //changed pid to waitpid to determine location of output
+        
         release(&ptable.lock);
         return pid;
       }
