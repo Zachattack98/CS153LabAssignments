@@ -1,15 +1,7 @@
 #include "types.h"
 #include "defs.h"
-#include "param.h"
-#include "memlayout.h"
-#include "mmu.h"
-#include "x86.h"
 #include "proc.h"
-#include "spinlock.h"
-//#include "types.h"
-//#include "defs.h"
 #include "syscall.h"
-//#include "proc.h"
 #include "user.h"
 
 int stdout = 1;

@@ -19,8 +19,10 @@ sys_exit(void)
 {
   int exitStat;
   if(argint(0, &exitStat) < 0) {  //assign new exit status to address 0 for exit() 
-    return -1;                    //to test if status is not less than 0.
-  }                               //before providing it in the parameter of exit().
+                                  //to test if status is valid
+                                  //before providing it in the parameter of exit().
+    return -1;    //return -1 if not valid
+  }
   exit(exitStat);
   return 0;         //not reached
 }
@@ -38,7 +40,8 @@ sys_wait2(void)
 {
   int *waitStat;
   if(argptr(0, (void*)&waitStat, sizeof(waitStat)) < 0) {   //assign new status pointer to address 0 for wait()
-    return -1;                                              //before providing it in the parameter of wait()
+                                                            //before providing it in the parameter of wait()
+    return -1;  //return -1 if no child exists
   }                                               
   return wait2(waitStat);  //returning pointer after using it as a parameter
 }
@@ -50,8 +53,9 @@ sys_waitpid(void)
   int *waitStat;
   int options;
   //assign all variables to three different addresses for waitpid() beforehand
+  //return value is the process id of the process that was terminated
   if (argint(0, &pid) < 0) {
-		return -1;
+		return -1;  //return -1 if process does not exist or an unexpected error occurred.
 	}
 	if (argptr(1, (void*)&waitStat, sizeof(waitStat)) < 0) {
 		return -1;

@@ -265,6 +265,9 @@ exit(int status)
   //Update the current process as the exit status of the termination process
   curproc->exitStatus = status;
   //changed************************
+  
+  // Jump into the scheduler, never to return.
+  curproc->state = ZOMBIE;
   sched();
   panic("zombie exit");
 }
