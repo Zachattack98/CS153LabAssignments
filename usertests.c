@@ -1782,7 +1782,7 @@ main(int argc, char *argv[])
   mem();
   pipe1();
   preempt();
-  exitwait2(0); //changed
+  exitwait();
 
   rmdot();
   fourteen();

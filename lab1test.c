@@ -1,7 +1,7 @@
 #include "types.h"
-#include "defs.h"
-#include "proc.h"
-#include "syscall.h"
+//#include "defs.h"
+//#include "proc.h"
+//#include "syscall.h"
 #include "user.h"
 
 int stdout = 1;
