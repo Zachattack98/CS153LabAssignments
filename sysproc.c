@@ -13,9 +13,16 @@ sys_fork(void)
   return fork();
 }
 
-//changed***************************************
 int
 sys_exit(void)
+{
+  exit();
+  return 0;
+}
+
+//changed***************************************
+int
+sys_exitStats(void)
 {
   int exitStat;
   if(argint(0, &exitStat) < 0) {  //assign new exit status to address 0 for exit() 
@@ -23,8 +30,8 @@ sys_exit(void)
                                   //before providing it in the parameter of exit().
     return -1;    //return -1 if not valid
   }
-  exit(exitStat);
-  return 0;         //not reached
+  
+  exitStats(exitStat);
 }
 //changed***************************************
 

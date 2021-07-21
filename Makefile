@@ -179,10 +179,9 @@ UPROGS=\
 	_rm\
 	_sh\
 	_stressfs\
-	_usertests\
+	_test\
 	_wc\
 	_zombie\
-	_lab1test\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)

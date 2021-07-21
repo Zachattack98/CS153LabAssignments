@@ -86,10 +86,11 @@ extern int sys_chdir(void);
 extern int sys_close(void);
 extern int sys_dup(void);
 extern int sys_exec(void);
-extern int sys_exit(int);    //changed
+extern int sys_exit(void);
+extern int sys_exitStats(void); //added
 extern int sys_wait(void);
-extern int sys_wait2(int*);  //added
-extern int sys_waitpid(int, int*, int); //added
+extern int sys_wait2(void);  //added
+extern int sys_waitpid(void); //added
 extern int sys_fork(void);
 extern int sys_fstat(void);
 extern int sys_getpid(void);
@@ -110,6 +111,7 @@ static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
 [SYS_exit]    sys_exit,
 [SYS_wait]    sys_wait,
+[SYS_exitStats] sys_exitStats, //added
 [SYS_wait2]   sys_wait2,   //added
 [SYS_waitpid] sys_waitpid, //added
 [SYS_pipe]    sys_pipe,

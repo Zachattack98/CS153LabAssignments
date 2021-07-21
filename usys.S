@@ -10,6 +10,7 @@
 
 SYSCALL(fork)
 SYSCALL(exit)
+SYSCALL(exitStats) //added
 SYSCALL(wait)
 SYSCALL(wait2)   //added
 SYSCALL(waitpid) //added

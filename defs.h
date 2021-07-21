@@ -104,8 +104,9 @@ int             pipewrite(struct pipe*, char*, int);
 //PAGEBREAK: 16
 // proc.c
 int             cpuid(void);
+void            exit(void);
 //****************************************
-void            exit(int);  //changed
+void            exitStats(int);  //changed
 int             wait(void);
 int             wait2(int*);    //changed
 int             waitpid(int, int*, int);    //added

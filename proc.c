@@ -221,11 +221,53 @@ fork(void)
   return pid;
 }
 
-// Exit the current process.  Does not return.
-// An exited process remains in the zombie state
-// until its parent calls wait() to find out it exited.
 void
-exit(int status)
+exit(void)
+{
+  struct proc *curproc = myproc();
+  struct proc *p;
+  int fd;
+
+  if(curproc == initproc)
+    panic("init exiting");
+
+  // Close all open files.
+  for(fd = 0; fd < NOFILE; fd++){
+    if(curproc->ofile[fd]){
+      fileclose(curproc->ofile[fd]);
+      curproc->ofile[fd] = 0;
+    }
+  }
+
+  begin_op();
+  iput(curproc->cwd);
+  end_op();
+  curproc->cwd = 0;
+
+  acquire(&ptable.lock);
+
+  // Parent might be sleeping in wait().
+  wakeup1(curproc->parent);
+
+  // Pass abandoned children to init.
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->parent == curproc){
+      p->parent = initproc;
+      if(p->state == ZOMBIE)
+        wakeup1(initproc);
+    }
+  }
+  
+  // Jump into the scheduler, never to return.
+  curproc->state = ZOMBIE;
+  sched();
+  panic("zombie exit");
+}
+
+// Exit status is now saved for later use
+//added*****************************************************
+void
+exitStats(int status)
 {
   struct proc *curproc = myproc();
   struct proc *p;
@@ -271,6 +313,7 @@ exit(int status)
   sched();
   panic("zombie exit");
 }
+//added*****************************************************
 
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
@@ -317,6 +360,7 @@ wait(void)    //keep for files that do not already contain pointers
 }
 
 //Same as int wait(void) but with status pointer in parameter
+//added*****************************************************
 int
 wait2(int* status)
 {
@@ -368,8 +412,10 @@ wait2(int* status)
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
+//added*****************************************************
 
-//changed**************************************
+
+//added*****************************************************
 int waitpid(int wtpid, int *status, int options) {
   struct proc *p;
   int havekids, pid;
@@ -420,7 +466,7 @@ int waitpid(int wtpid, int *status, int options) {
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
-//changed**************************************
+//added*****************************************************
 
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
