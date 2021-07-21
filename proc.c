@@ -394,7 +394,7 @@ wait2(int* status)
         if(status != 0) {
           *status = p->exitStatus;  //status pointer now equals the exit status
         }
-        printf("Status in Kernel (wait (1)): %d\n", *status);
+        //printf("Status in Kernel (wait (1)): %d\n", *status);
         //changed***************************************************
 
         release(&ptable.lock);
@@ -428,7 +428,7 @@ int waitpid(int wtpid, int *status, int options) {
 
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     //changed*********************************************************************************
-      cprintf("pid: %d  waitpid: %d\n", p->pid, wtpid); //display both pids to see any differences or similarities
+      //cprintf("pid: %d  waitpid: %d\n", p->pid, wtpid); //display both pids to see any differences or similarities
       if(p->pid != wtpid)    //change statement to compare the previous pid with that of waitpid
         continue;
     //changed*********************************************************************************

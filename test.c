@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     //begin testing status pointer with wait2
     if(fork() == 0) {   //implement simple fork() as condition
         sleep(2);   //sleeps for only 2 seconds
-        exitStats(25);   //can be any value
+        exitStats(0);   //can be any value
     }
     else {
         int *status = malloc(sizeof(*status));
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     //now begin testing status pointer with waitpid
     if((child_pid = fork()) == 0) {   //assign child pid as fork() to compare in the condition
         sleep(2);
-        exitStats(14);   //can be any value
+        exitStats(0);   //can be any value
     }
     else {
         int *status = malloc(sizeof(*status));
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
    if (!child1_pid) { //child1
      printf(1, "Child 1 - Child 1's pid: %d\n", getpid());
      printf(1, "Child 1 - Exiting with status 10...\n");
-     exitStats(10);
+     exitStats(0);
    }
    else if (child1_pid > 0) { //Parent
      child1_return = wait2(&child1_exit);
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
    if (!child2_pid) {  //child2
      printf(1, "Child 2's pid: %d\n", getpid());
      printf(1, "Child 2 exiting with status 20...\n");
-     exitStats(20);
+     exitStats(0);
    }
    else if (child2_pid > 0) { //Parent
      child2_return = wait2(&child2_exit);
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
    if (!child3_pid) { //child3
      printf(1, "Child 3's pid: %d\n", getpid());
      printf(1, "Child 3 exiting with status 30...\n");
-     exitStats(30);
+     exitStats(0);
    }
    else if (child3_pid > 0) { //Parent
      int* child3_null = 0;
@@ -128,7 +128,7 @@ sleep(5);
 printf(1, "Parent - Waiting process w/ pid %d\n", 1, 999);
 return_pid = waitpid(999, &exit_status, 0);
 printf(1, "Parent - Child %d exited, returned pid: %d, exit status %d\n", 4, return_pid, exit_status);
-//exit(0);
-return 0;*/
+exitStats(0);*/
+//return 0;
 
 }
