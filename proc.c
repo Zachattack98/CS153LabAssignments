@@ -14,7 +14,7 @@ struct {
 
 static struct proc *initproc;
 
-int nextpid = 1;
+int nextpid = 1, valid_wait = 0; //added valid
 extern void forkret(void);
 extern void trapret(void);
 
@@ -378,6 +378,15 @@ wait2(int* status)
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
+        //changed***************************************************
+        if(status != 0) {
+          *status = p->exitStatus;  //status pointer now equals the exit status
+        }
+        if(valid_wait == 0) {
+          cprintf("Status in Kernel (wait(1)): %d\n", *status);
+          valid_wait = 1;
+        }
+        //changed***************************************************
 
         pid = p->pid;
         kfree(p->kstack);
@@ -388,14 +397,6 @@ wait2(int* status)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-
-        //changed***************************************************
-        //If int* status is not zero, pass the child's exit status
-        if(status != 0) {
-          *status = p->exitStatus;  //status pointer now equals the exit status
-        }
-        //printf("Status in Kernel (wait (1)): %d\n", *status);
-        //changed***************************************************
 
         release(&ptable.lock);
         return pid;
@@ -428,13 +429,18 @@ int waitpid(int wtpid, int *status, int options) {
 
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     //changed*********************************************************************************
-      //cprintf("pid: %d  waitpid: %d\n", p->pid, wtpid); //display both pids to see any differences or similarities
+      cprintf("pid: %d  waitpid: %d\n", p->pid, wtpid); //display both pids to see any differences or similarities
       if(p->pid != wtpid)    //change statement to compare the previous pid with that of waitpid
         continue;
     //changed*********************************************************************************
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
+        if(status != 0) {
+          *status = p->exitStatus;  //status pointer now equals the exit status
+        }
+
+        cprintf("Status in Kernel (wait(3)): %d\n", *status);
 
         pid = p->pid;
         kfree(p->kstack);
@@ -446,10 +452,9 @@ int waitpid(int wtpid, int *status, int options) {
         p->killed = 0;
         p->state = UNUSED;
 
-        if(status != 0) {
-          *status = p->exitStatus;  //status pointer now equals the exit status
-        }
-        cprintf("Status in Kernel (waitpid (1)): %d\n", *status);   //changed pid to waitpid to determine location of output
+        //if(status != 0) {
+          //*status = p->exitStatus;  //status pointer now equals the exit status
+        //}
         
         release(&ptable.lock);
         return pid;

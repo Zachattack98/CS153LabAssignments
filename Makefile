@@ -179,7 +179,7 @@ UPROGS=\
 	_rm\
 	_sh\
 	_stressfs\
-	_test\
+	_test1\
 	_wc\
 	_zombie\
 

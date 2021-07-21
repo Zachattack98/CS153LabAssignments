@@ -32,6 +32,7 @@ sys_exitStats(void)
   }
   
   exitStats(exitStat);
+  return 0;
 }
 //changed***************************************
 
