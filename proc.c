@@ -379,7 +379,7 @@ wait2(int* status)
       if(p->state == ZOMBIE){
         // Found one.
         //changed***************************************************
-        if(status != 0) {
+        if(status != 0) { //check if a child has been terminated; if any
           *status = p->exitStatus;  //status pointer now equals the exit status
         }
         if(valid_wait == 0) {
@@ -430,7 +430,7 @@ int waitpid(int wtpid, int *status, int options) {
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     //changed*********************************************************************************
       cprintf("pid: %d  waitpid: %d\n", p->pid, wtpid); //display both pids to see any differences or similarities
-      if(p->pid != wtpid)    //change statement to compare the previous pid with that of waitpid
+      if(p->pid != wtpid)    //change statement to compare pids of upcoming process with that of the pid provided in waitpid
         continue;
     //changed*********************************************************************************
       havekids = 1;
