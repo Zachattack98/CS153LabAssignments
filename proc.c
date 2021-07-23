@@ -14,7 +14,7 @@ struct {
 
 static struct proc *initproc;
 
-int nextpid = 1, valid_wait = 0; //added valid
+int nextpid = 1, valid_wait = 0;  //added valid wait
 extern void forkret(void);
 extern void trapret(void);
 
@@ -382,10 +382,12 @@ wait2(int* status)
         if(status != 0) {
           *status = p->exitStatus;  //status pointer now equals the exit status
         }
-        if(valid_wait == 0) {
-          cprintf("Status in Kernel (wait(1)): %d\n", *status);
-          valid_wait = 1;
-        }
+        //if(*status >= 0) {
+          if(valid_wait == 0) {
+           cprintf("Status in Kernel (wait(1)): %d\n", *status);
+           valid_wait = 1;
+          }
+        //}
         //changed***************************************************
 
         pid = p->pid;
@@ -429,6 +431,7 @@ int waitpid(int wtpid, int *status, int options) {
 
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     //changed*********************************************************************************
+      //cprintf("!!!!%d     $$$$$%d\n", ptable.proc, &ptable.proc[NPROC]);
       cprintf("pid: %d  waitpid: %d\n", p->pid, wtpid); //display both pids to see any differences or similarities
       if(p->pid != wtpid)    //change statement to compare the previous pid with that of waitpid
         continue;

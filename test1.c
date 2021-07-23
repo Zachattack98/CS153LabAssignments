@@ -10,7 +10,6 @@
 
 int main(int argc, char *argv[]) {
   printf(1, "This is the test program for CS153 Lab1\n\n"); // fd=1 means standard output.
-
     //begin testing status pointer with wait2
     if(fork() == 0) {   //implement simple fork() as condition
         sleep(2);   //sleeps for only 2 seconds

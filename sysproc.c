@@ -25,6 +25,7 @@ int
 sys_exitStats(void)
 {
   int exitStat;
+  //passing integer into the kernel function
   if(argint(0, &exitStat) < 0) {  //assign new exit status to address 0 for exit() 
                                   //to test if status is valid
                                   //before providing it in the parameter of exit().
