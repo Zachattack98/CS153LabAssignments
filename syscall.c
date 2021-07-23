@@ -112,9 +112,10 @@ static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
 [SYS_exit]    sys_exit,
 [SYS_wait]    sys_wait,
-[SYS_exitStats] sys_exitStats, //added
-[SYS_wait2]   sys_wait2,   //added
-[SYS_waitpid] sys_waitpid, //added
+[SYS_exitStats] sys_exitStats,
+[SYS_wait2]   sys_wait2,
+[SYS_waitpid] sys_waitpid,
+[SYS_setPrior] sys_setPrior, //added
 [SYS_pipe]    sys_pipe,
 [SYS_read]    sys_read,
 [SYS_kill]    sys_kill,
