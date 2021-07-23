@@ -106,10 +106,11 @@ int             pipewrite(struct pipe*, char*, int);
 int             cpuid(void);
 void            exit(void);
 //****************************************
-void            exitStats(int);  //changed
+void            exitStats(int);
 int             wait(void);
-int             wait2(int*);    //changed
-int             waitpid(int, int*, int);    //added
+int             wait2(int*);
+int             waitpid(int, int*, int);
+int             setPriority(int); //added
 //****************************************
 int             fork(void);
 int             growproc(int);

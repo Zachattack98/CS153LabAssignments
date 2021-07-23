@@ -87,10 +87,11 @@ extern int sys_close(void);
 extern int sys_dup(void);
 extern int sys_exec(void);
 extern int sys_exit(void);
-extern int sys_exitStats(void); //added
+extern int sys_exitStats(void);
 extern int sys_wait(void);
-extern int sys_wait2(void);  //added
-extern int sys_waitpid(void); //added
+extern int sys_wait2(void);
+extern int sys_waitpid(void);
+extern int sys_setPrior(void); //added
 extern int sys_fork(void);
 extern int sys_fstat(void);
 extern int sys_getpid(void);

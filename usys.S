@@ -10,10 +10,11 @@
 
 SYSCALL(fork)
 SYSCALL(exit)
-SYSCALL(exitStats) //added
+SYSCALL(exitStats)
 SYSCALL(wait)
-SYSCALL(wait2)   //added
-SYSCALL(waitpid) //added
+SYSCALL(wait2)
+SYSCALL(waitpid)
+SYSCALL(setPriority) //added
 SYSCALL(pipe)
 SYSCALL(read)
 SYSCALL(write)
