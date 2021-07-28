@@ -14,7 +14,7 @@ struct {
 
 static struct proc *initproc;
 
-int nextpid = 1, valid_wait = 0; //added valid
+int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
 
@@ -382,9 +382,8 @@ wait2(int* status)
         if(status != 0) { //check if a child has been terminated; if any
           *status = p->exitStatus;  //status pointer now equals the exit status
         }
-        if(valid_wait == 0) {
+        if(status > 0) {
           cprintf("Status in Kernel (wait(1)): %d\n", *status);
-          valid_wait = 1;
         }
         //changed***************************************************
 
