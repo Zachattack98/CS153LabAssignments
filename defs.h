@@ -110,7 +110,7 @@ void            exitStats(int);
 int             wait(void);
 int             wait2(int*);
 int             waitpid(int, int*, int);
-int             setPriority(int); //added
+void            setPriority(int); //added
 //****************************************
 int             fork(void);
 int             growproc(int);

@@ -14,7 +14,7 @@ SYSCALL(exitStats)
 SYSCALL(wait)
 SYSCALL(wait2)
 SYSCALL(waitpid)
-SYSCALL(setPriority) //added
+SYSCALL(setPrior) //added
 SYSCALL(pipe)
 SYSCALL(read)
 SYSCALL(write)

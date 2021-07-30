@@ -49,9 +49,10 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-  //changed*******************
   int exitStatus;               //Term for storing/saving an exit status of the terminated process
-  //changed*******************
+  //added
+  int priorVal;                 //Variable for storing the priority value
+  //added
 };
 
 // Process memory is laid out contiguously, low addresses first:

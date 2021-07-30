@@ -20,7 +20,6 @@ sys_exit(void)
   return 0;
 }
 
-//changed***************************************
 int
 sys_exitStats(void)
 {
@@ -35,7 +34,6 @@ sys_exitStats(void)
   exitStats(exitStat);
   return 0;
 }
-//changed***************************************
 
 int
 sys_wait(void)
@@ -43,7 +41,6 @@ sys_wait(void)
   return wait();
 }
 
-//changed***************************************
 int
 sys_wait2(void)
 {
@@ -75,7 +72,19 @@ sys_waitpid(void)
 
   return waitpid(pid, waitStat, options);  //returning pointer after using it as a parameter
 }
+
+
 //changed***************************************
+int sys_setPriority(void) {
+  int PriorStat;
+  if(argint(0, &PriorStat) < 0) {   //assign new status pointer to address 0 for setPriority()
+    return -1;  //return -1
+  }                                               
+  setPriority(PriorStat);  //since setPriority is void (only assigns priority to a new variable) it is not returned
+  return;
+}
+//changed***************************************
+
 
 int
 sys_kill(void)

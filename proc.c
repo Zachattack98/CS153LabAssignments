@@ -14,7 +14,7 @@ struct {
 
 static struct proc *initproc;
 
-int nextpid = 1, valid_wait = 0;  //added valid wait
+int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
 
@@ -303,10 +303,8 @@ exitStats(int status)
     }
   }
 
-  //changed************************
   //Update the current process as the exit status of the termination process
   curproc->exitStatus = status;
-  //changed************************
   
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
@@ -360,7 +358,6 @@ wait(void)    //keep for files that do not already contain pointers
 }
 
 //Same as int wait(void) but with status pointer in parameter
-//added*****************************************************
 int
 wait2(int* status)
 {
@@ -378,17 +375,12 @@ wait2(int* status)
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
-        //changed***************************************************
         if(status != 0) {
           *status = p->exitStatus;  //status pointer now equals the exit status
         }
-        //if(*status >= 0) {
-          if(valid_wait == 0) {
+        if(*status >= 0) {
            cprintf("Status in Kernel (wait(1)): %d\n", *status);
-           valid_wait = 1;
-          }
-        //}
-        //changed***************************************************
+        }
 
         pid = p->pid;
         kfree(p->kstack);
@@ -415,10 +407,8 @@ wait2(int* status)
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
-//added*****************************************************
 
 
-//added*****************************************************
 int waitpid(int wtpid, int *status, int options) {
   struct proc *p;
   int havekids, pid;
@@ -430,12 +420,10 @@ int waitpid(int wtpid, int *status, int options) {
     havekids = 0;
 
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    //changed*********************************************************************************
-      //cprintf("!!!!%d     $$$$$%d\n", ptable.proc, &ptable.proc[NPROC]);
       cprintf("pid: %d  waitpid: %d\n", p->pid, wtpid); //display both pids to see any differences or similarities
       if(p->pid != wtpid)    //change statement to compare the previous pid with that of waitpid
         continue;
-    //changed*********************************************************************************
+    
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
@@ -454,10 +442,6 @@ int waitpid(int wtpid, int *status, int options) {
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-
-        //if(status != 0) {
-          //*status = p->exitStatus;  //status pointer now equals the exit status
-        //}
         
         release(&ptable.lock);
         return pid;
@@ -474,7 +458,27 @@ int waitpid(int wtpid, int *status, int options) {
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
-//added*****************************************************
+
+void setPriority(int prior) {
+  struct proc *curproc = myproc();  //initialize current process
+  acquire(&ptable.lock);  //Lock content to modify curproc->priorVal
+
+  //priority has to be between 0 and 31
+  //otherwise assign priorVal to value of parameter prior
+  if(prior < 0)
+    curproc->priorVal = 0;
+  else if(prior > 31)
+    curproc->priorVal = 31;
+  else
+    curproc->priorVal = prior;
+
+  cprintf("Priority value in Kernel Mode: %d\n", prior);
+  release(&ptable.lock);  //Unlock content
+  yield();  //Force context switch from the current process.
+            //Since the priority level for the current process has changed,
+            //call scheduler immediately.
+  return;
+}
 
 //PAGEBREAK: 42
 // Per-CPU process scheduler.

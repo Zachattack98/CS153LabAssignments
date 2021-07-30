@@ -180,6 +180,7 @@ UPROGS=\
 	_sh\
 	_stressfs\
 	_test1\
+	_test2\
 	_wc\
 	_zombie\
 
