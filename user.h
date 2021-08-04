@@ -3,11 +3,12 @@ struct rtcdate;
 
 // system calls
 int fork(void);
-//****************************************
 int exit(void) __attribute__((noreturn));
 int exitStats(int) __attribute__((noreturn));
 int wait2(int*);
 int waitpid(int, int*, int);
+//****************************************
+void setPrior(int);     //added
 //****************************************
 int wait(void);
 int pipe(int*);

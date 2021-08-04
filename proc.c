@@ -378,9 +378,9 @@ wait2(int* status)
         if(status != 0) {
           *status = p->exitStatus;  //status pointer now equals the exit status
         }
-        if(*status >= 0) {
+        /*if(*status >= 0) {
            cprintf("Status in Kernel (wait(1)): %d\n", *status);
-        }
+        }*/
 
         pid = p->pid;
         kfree(p->kstack);
@@ -420,7 +420,7 @@ int waitpid(int wtpid, int *status, int options) {
     havekids = 0;
 
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      cprintf("pid: %d  waitpid: %d\n", p->pid, wtpid); //display both pids to see any differences or similarities
+      //cprintf("pid: %d  waitpid: %d\n", p->pid, wtpid); //display both pids to see any differences or similarities
       if(p->pid != wtpid)    //change statement to compare the previous pid with that of waitpid
         continue;
     
@@ -431,7 +431,7 @@ int waitpid(int wtpid, int *status, int options) {
           *status = p->exitStatus;  //status pointer now equals the exit status
         }
 
-        cprintf("Status in Kernel (wait(3)): %d\n", *status);
+        //cprintf("Status in Kernel (wait(3)): %d\n", *status);
 
         pid = p->pid;
         kfree(p->kstack);
@@ -523,6 +523,76 @@ scheduler(void)
 
   }
 }
+
+//changed*******************************************
+void
+prior_scheduler(void)
+{
+  struct proc *p;
+  struct cpu *c = mycpu();
+  c->proc = 0;
+  int maxprior = 31; //the range of blocks for a stack is 0-31; review CS161
+  
+  for(;;){
+    // Enable interrupts on this processor.
+    sti();
+
+    // Loop over process table looking for process to run.
+    acquire(&ptable.lock);
+
+    //added********************************
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
+      //unless priorVal is 31, the maximu priority level will change to that of priorVal
+      //maxprior also keeps decreasing until it reaches the lowest possible value of priorVal
+      if (maxprior > p->priorVal)
+        maxprior = p->priorVal;
+    }
+    //added********************************
+
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
+
+      if (p->priorVal == maxprior) {  //added********
+        // Switch to chosen process.  It is the process's job
+        // to release ptable.lock and then reacquire it
+        // before jumping back to us.
+        c->proc = p;
+        switchuvm(p);
+        p->state = RUNNING;
+
+        swtch(&(c->scheduler), p->context);
+        switchkvm();
+
+        // Process is done running for now.
+        // It should have changed its p->state before coming back.
+        c->proc = 0;
+
+        //added********
+        if (p->priorVal >= 0 && p->priorVal < 31) {
+          p->priorVal++;
+        } 
+        else {
+          p->priorVal = 31; //keep in range
+        }
+        //added********
+      }
+      else {  //added********
+        if (p->priorVal > 0 && p->priorVal < 32) {
+          p->priorVal--;
+        } 
+        else {
+          p->priorVal = 0; //keep in range
+        }
+      }
+    }
+    release(&ptable.lock);
+
+  }
+}
+//changed*******************************************
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores

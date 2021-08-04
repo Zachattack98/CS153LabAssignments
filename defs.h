@@ -105,12 +105,13 @@ int             pipewrite(struct pipe*, char*, int);
 // proc.c
 int             cpuid(void);
 void            exit(void);
-//****************************************
 void            exitStats(int);
 int             wait(void);
 int             wait2(int*);
 int             waitpid(int, int*, int);
+//****************************************
 void            setPriority(int); //added
+void            prior_scheduler(void); //added
 //****************************************
 int             fork(void);
 int             growproc(int);

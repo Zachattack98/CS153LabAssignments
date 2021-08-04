@@ -74,16 +74,16 @@ sys_waitpid(void)
 }
 
 
-//changed***************************************
+//added***************************************
 int sys_setPriority(void) {
-  int PriorStat;
-  if(argint(0, &PriorStat) < 0) {   //assign new status pointer to address 0 for setPriority()
+  int priorStat;
+  if(argint(0, &priorStat) < 0) {   //assign new status pointer to address 0 for setPriority()
     return -1;  //return -1
   }                                               
-  setPriority(PriorStat);  //since setPriority is void (only assigns priority to a new variable) it is not returned
-  return;
+  setPriority(priorStat);  //since setPriority is void (only assigns priority to a new variable) it is not returned
+  return 0;
 }
-//changed***************************************
+//added***************************************
 
 
 int
