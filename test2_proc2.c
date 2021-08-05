@@ -13,5 +13,5 @@ int main(int argc, char *argv[]) {
         }
     }
     printf(1, "Process 2 finished! - ");
-    exit();
+    exitStats(0);
 }

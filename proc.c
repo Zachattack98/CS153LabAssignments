@@ -488,7 +488,7 @@ void setPriority(int prior) {
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
-void
+/*void
 scheduler(void)
 {
   struct proc *p;
@@ -522,11 +522,11 @@ scheduler(void)
     release(&ptable.lock);
 
   }
-}
+}*/
 
 //changed*******************************************
 void
-prior_scheduler(void)
+scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
@@ -571,12 +571,12 @@ prior_scheduler(void)
         c->proc = 0;
 
         //added********
-        if (p->priorVal >= 0 && p->priorVal < 31) {
+        /*if (p->priorVal >= 0 && p->priorVal < 31) {
           p->priorVal++;
         } 
         else {
           p->priorVal = 31; //keep in range
-        }
+        }*/
         //added********
       }
       else {  //added********
