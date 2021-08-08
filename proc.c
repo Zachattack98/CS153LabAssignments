@@ -612,6 +612,55 @@ scheduler(void)
 
   }
 }
+
+/*void
+scheduler(void)
+{
+  struct proc *p;
+  struct proc *loop_proc;
+  struct cpu *c = mycpu();
+  c->proc = 0;
+  struct proc *maxproc;
+
+  for(;;){
+    // Enable interrupts on this processor.
+    sti();
+
+    // Loop over process table looking for process to run.
+    acquire(&ptable.lock);
+
+    //added********************************
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      maxproc = p;
+      if(p->state != RUNNABLE)
+        continue;
+
+      for(loop_proc = ptable.proc; loop_proc < &ptable.proc[NPROC]; loop_proc++){
+        if(loop_proc->state != RUNNABLE)
+          continue;
+
+        if(maxproc->priorVal > loop_proc->priorVal) 
+          maxproc = loop_proc;
+        else
+          loop_proc->priorVal = (loop_proc->priorVal - 1);
+      }    
+        p = maxproc;
+        c->proc = p;
+        switchuvm(p);
+        p->state = RUNNING;
+
+        p->burstT++;  //increment the number of seconds the given process runs
+        p->priorVal = (p->priorVal + 1);
+
+        swtch(&(c->scheduler), p->context);
+        switchkvm();
+        c->proc = 0;
+
+    }
+    release(&ptable.lock);
+
+  }
+}*/
 //changed*******************************************
 
 // Enter scheduler.  Must hold only ptable.lock
