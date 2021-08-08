@@ -12,6 +12,7 @@ int main(int argc, char *argv[]) {
             asm("nop");
         }
     }
-    printf(1, "Process 2 finished! - ");
+    printf(1, "\nProcess 2 finished! - ");
+    printTime();
     exitStats(0);
 }

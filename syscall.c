@@ -92,6 +92,7 @@ extern int sys_wait(void);
 extern int sys_wait2(void);
 extern int sys_waitpid(void);
 extern int sys_setPriority(void); //added
+extern int sys_printTime(void);   //added
 extern int sys_fork(void);
 extern int sys_fstat(void);
 extern int sys_getpid(void);
@@ -116,6 +117,7 @@ static int (*syscalls[])(void) = {
 [SYS_wait2]   sys_wait2,
 [SYS_waitpid] sys_waitpid,
 [SYS_setPrior] sys_setPriority, //added
+[SYS_printTime] sys_printTime,  //added
 [SYS_pipe]    sys_pipe,
 [SYS_read]    sys_read,
 [SYS_kill]    sys_kill,

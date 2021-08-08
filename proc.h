@@ -51,7 +51,10 @@ struct proc {
   char name[16];               // Process name (debugging)
   int exitStatus;               //Term for storing/saving an exit status of the terminated process
   //added****
-  int priorVal;                 //Variable for storing the priority value
+  int priorVal;                 //Variable for storing the priority value.
+  int startT;                   //Time intervals involved with
+  int burstT;                   //printing turnaround time
+  int endT;                     //during a priority schedule.
   //added****
 };
 

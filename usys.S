@@ -15,6 +15,7 @@ SYSCALL(wait)
 SYSCALL(wait2)
 SYSCALL(waitpid)
 SYSCALL(setPrior) //added
+SYSCALL(printTime)  //added
 SYSCALL(pipe)
 SYSCALL(read)
 SYSCALL(write)

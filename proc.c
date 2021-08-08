@@ -459,26 +459,47 @@ int waitpid(int wtpid, int *status, int options) {
   }
 }
 
+//added******************************************************************************
 void setPriority(int prior) {
   struct proc *curproc = myproc();  //initialize current process
   acquire(&ptable.lock);  //Lock content to modify curproc->priorVal
 
   //priority has to be between 0 and 31
   //otherwise assign priorVal to value of parameter prior
-  if(prior < 0)
+  if(prior < 0)   //no value can be less than 0
     curproc->priorVal = 0;
-  else if(prior > 31)
+  else if(prior > 31) //no value can be greater than 31
     curproc->priorVal = 31;
   else
-    curproc->priorVal = prior;
+    curproc->priorVal = prior;  //value is within 0 and 31 so assign priorVal as prior
 
   cprintf("Priority value in Kernel Mode: %d\n", prior);
   release(&ptable.lock);  //Unlock content
   yield();  //Force context switch from the current process.
             //Since the priority level for the current process has changed,
             //call scheduler immediately.
-  return;
 }
+
+//printing Turnaround time; arrival time for all processes is set to zero
+void prntTime(void) {
+  struct proc *curproc = myproc();  //initialize current process
+  int turnaroundT;
+  int waitT;
+
+  acquire(&tickslock);  //Lock tick count
+  curproc->endT = ticks;
+  release(&tickslock);  //Unlock tick count
+
+  acquire(&ptable.lock);  //Lock content
+  turnaroundT = curproc->endT - curproc->startT;
+  waitT = turnaroundT - curproc->burstT;
+
+  cprintf("\nStart: %d    End: %d    Burst: %d\n", curproc->startT, curproc->endT, curproc->burstT);
+  cprintf("Turnaround: %d    Waiting: %d\n", turnaroundT, waitT);
+  release(&ptable.lock);  //Unlock content
+
+}
+//added******************************************************************************
 
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
@@ -525,6 +546,7 @@ scheduler(void)
 }*/
 
 //changed*******************************************
+//priority ranging from 0-31; 0 is highest and 31 is lowest
 void
 scheduler(void)
 {
@@ -544,7 +566,7 @@ scheduler(void)
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
-      //unless priorVal is 31, the maximu priority level will change to that of priorVal
+      //unless priorVal is 31, the maximum priority level will change to that of priorVal
       //maxprior also keeps decreasing until it reaches the lowest possible value of priorVal
       if (maxprior > p->priorVal)
         maxprior = p->priorVal;
@@ -556,32 +578,30 @@ scheduler(void)
         continue;
 
       if (p->priorVal == maxprior) {  //added********
-        // Switch to chosen process.  It is the process's job
-        // to release ptable.lock and then reacquire it
-        // before jumping back to us.
+        // Switch to chosen process.
         c->proc = p;
         switchuvm(p);
         p->state = RUNNING;
 
+        p->burstT++;  //increment the number of seconds the given process runs
+
         swtch(&(c->scheduler), p->context);
         switchkvm();
-
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
         c->proc = 0;
 
         //added********
-        /*if (p->priorVal >= 0 && p->priorVal < 31) {
-          p->priorVal++;
+        if (p->priorVal >= 0 && p->priorVal < 31) {
+          p->priorVal++; //moving down one level
         } 
         else {
           p->priorVal = 31; //keep in range
-        }*/
+        }
         //added********
       }
       else {  //added********
         if (p->priorVal > 0 && p->priorVal < 32) {
-          p->priorVal--;
+          p->priorVal--;  //moving up one level
+                          //keep decrementing until we the highest priority since zero is the highest
         } 
         else {
           p->priorVal = 0; //keep in range
