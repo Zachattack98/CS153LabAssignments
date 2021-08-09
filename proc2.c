@@ -3,7 +3,8 @@
 #include "stat.h"
 
 int main(int argc, char *argv[]) {
-    setPrior(14);
+    int num = 8;
+    setPrior(2, num);
 
     int i, j;
     for(i = 0; i < 4500; i++) {
@@ -12,6 +13,8 @@ int main(int argc, char *argv[]) {
             asm("nop");
         }
     }
+
+
     printf(1, "\nProcess 2 finished! - ");
     printTime();
     exitStats(0);

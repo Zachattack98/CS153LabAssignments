@@ -54,7 +54,7 @@ struct proc {
   int priorVal;                 //Variable for storing the priority value.
   int startT;                   //Time intervals involved with
   int burstT;                   //printing turnaround time
-  int endT;                     //during a priority schedule.
+  int endT;
   //added****
 };
 

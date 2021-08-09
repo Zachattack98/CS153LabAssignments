@@ -76,11 +76,15 @@ sys_waitpid(void)
 
 //added***************************************
 int sys_setPriority(void) {
+  int priorNum;
   int priorStat;
-  if(argint(0, &priorStat) < 0) {   //assign new status pointer to address 0 for setPriority()
+  if(argint(0, &priorNum) < 0) {   //assign new status pointer to address 0 for setPriority()
+    return -1;  //return -1
+  }
+  if(argint(1, &priorStat) < 0) {   //assign new status pointer to address 1 for setPriority()
     return -1;  //return -1; no priority value exists (Note: not about range 0-31, that is in proc.c)
   }                                               
-  setPriority(priorStat);  //since setPriority is void (only assigns priority to a new variable) it is not returned
+  setPriority(priorNum, priorStat);  //since setPriority is void (only assigns priority to a new variable) it is not returned
   return 0;
 }
 

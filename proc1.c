@@ -3,7 +3,8 @@
 #include "stat.h"
 
 int main(int argc, char *argv[]) {
-    setPrior(1);
+    int num = 17;
+    setPrior(1, num);
 
     int i, j;
     for(i = 0; i < 4500; i++) {

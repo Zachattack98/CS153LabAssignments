@@ -110,7 +110,7 @@ int             wait(void);
 int             wait2(int*);
 int             waitpid(int, int*, int);
 //****************************************
-void            setPriority(int); //added
+void            setPriority(int, int); //added
 void            prior_scheduler(void); //added
 void            prntTime(void); //added
 //****************************************

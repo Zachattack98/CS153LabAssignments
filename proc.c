@@ -15,6 +15,7 @@ struct {
 static struct proc *initproc;
 
 int nextpid = 1;
+int ageRun = 0, ageWait = 0; //added
 extern void forkret(void);
 extern void trapret(void);
 
@@ -460,7 +461,7 @@ int waitpid(int wtpid, int *status, int options) {
 }
 
 //added******************************************************************************
-void setPriority(int prior) {
+void setPriority(int procNum, int prior) {
   struct proc *curproc = myproc();  //initialize current process
   acquire(&ptable.lock);  //Lock content to modify curproc->priorVal
 
@@ -473,7 +474,16 @@ void setPriority(int prior) {
   else
     curproc->priorVal = prior;  //value is within 0 and 31 so assign priorVal as prior
 
-  cprintf("Priority value in Kernel Mode: %d\n", prior);
+  cprintf("Process %d Priority value in Kernel Mode: %d\n", procNum, prior);
+
+  //prove that aging of wait has occurred as well as the process running
+  if(ageWait == 1) {
+    cprintf("Current: %d   New: %d  -> Process is waiting and priority has decremented\n", prior, (prior - ageWait));
+  }
+  if(ageRun == 1) {
+    cprintf("Current: %d   New: %d  -> Process is running and priority has incremented\n\n", prior, (prior + ageRun));
+  }
+
   release(&ptable.lock);  //Unlock content
   yield();  //Force context switch from the current process.
             //Since the priority level for the current process has changed,
@@ -496,6 +506,7 @@ void prntTime(void) {
 
   cprintf("\nStart: %d    End: %d    Burst: %d\n", curproc->startT, curproc->endT, curproc->burstT);
   cprintf("Turnaround: %d    Waiting: %d\n", turnaroundT, waitT);
+  
   release(&ptable.lock);  //Unlock content
 
 }
@@ -546,6 +557,8 @@ scheduler(void)
 }*/
 
 //changed*******************************************
+int waitValid = 1;
+int runValid = 1;
 //priority ranging from 0-31; 0 is highest and 31 is lowest
 void
 scheduler(void)
@@ -592,27 +605,44 @@ scheduler(void)
         //added********
         if (p->priorVal >= 0 && p->priorVal < 31) {
           p->priorVal++; //moving down one level
+          if(runValid) { //only implement once to prove processes that run increment their priority values
+            ageRun++;
+            //cprintf("\n1111111111\n" );
+            //cprintf("!!!!!!! %d   %d  %d", p->ageRun, p->priorVal, maxprior);
+            runValid = 0;
+          }
         } 
         else {
           p->priorVal = 31; //keep in range
         }
         //added********
       }
-      else {  //added********
+      //added********
+      //age waiting processes to reduce starvation
+      else {
         if (p->priorVal > 0 && p->priorVal < 32) {
           p->priorVal--;  //moving up one level
-                          //keep decrementing until we the highest priority since zero is the highest
+                          //keep decrementing until the highest priority since zero is the highest
+          if(waitValid) { //only implement once to prove processes that wait decrement their priority values
+            ageWait++;
+            //cprintf("\n222222222\n");
+            //cprintf("????????? %d   %d", p->ageWait, p->priorVal);
+            waitValid = 0;
+          }
         } 
         else {
           p->priorVal = 0; //keep in range
         }
       }
+      //added********
     }
     release(&ptable.lock);
 
   }
 }
+//changed*******************************************
 
+//changed*******************************************
 /*void
 scheduler(void)
 {
