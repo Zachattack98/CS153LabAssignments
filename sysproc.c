@@ -85,7 +85,11 @@ int sys_setPriority(void) {
 }
 
 int sys_printTime(void) {
-  prntTime();
+  int priorStat;
+  if(argint(0, &priorStat) < 0) {   //assign new status pointer to address 0 for setPriority()
+    return -1;  //return -1; no priority value exists (Note: not about range 0-31, that is in proc.c)
+  } 
+  prntTime(priorStat);
   return 0;
 }
 //added***************************************

@@ -7,6 +7,37 @@
 #include "proc.h"
 #include "spinlock.h"
 
+// Return a integer between 0 and ((2^32 - 1) / 2), which is 2147483647.
+uint
+random(void)
+{
+  static unsigned int z1 = 12345, z2 = 12345, z3 = 12345, z4 = 12345;
+  unsigned int b;
+  b  = ((z1 << 6) ^ z1) >> 13;
+  z1 = ((z1 & 4294967294U) << 18) ^ b;
+  b  = ((z2 << 2) ^ z2) >> 27; 
+  z2 = ((z2 & 4294967288U) << 2) ^ b;
+  b  = ((z3 << 13) ^ z3) >> 21;
+  z3 = ((z3 & 4294967280U) << 7) ^ b;
+  b  = ((z4 << 3) ^ z4) >> 12;
+  z4 = ((z4 & 4294967168U) << 13) ^ b;
+
+  return (z1 ^ z2 ^ z3 ^ z4) / 2;
+}
+
+// Return a random integer between a given range.
+int
+randomrange(int lo, int hi)
+{
+  if (hi < lo) {
+    int tmp = lo;
+    lo = hi;
+    hi = tmp;
+  }
+  int range = hi - lo + 1;
+  return random() % (range) + lo;
+}
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -473,18 +504,61 @@ void setPriority(int prior) {
   else
     curproc->priorVal = prior;  //value is within 0 and 31 so assign priorVal as prior
 
-  cprintf("Priority value in Kernel Mode: %d\n", prior);
+  cprintf("\n\nPriority value in Kernel Mode: %d", prior);
   release(&ptable.lock);  //Unlock content
   yield();  //Force context switch from the current process.
             //Since the priority level for the current process has changed,
             //call scheduler immediately.
 }
 
+int cnt = 0;
+int total = 0;
+int wticket = 0;
 //printing Turnaround time; arrival time for all processes is set to zero
-void prntTime(void) {
+void prntTime(int numTickets) {
   struct proc *curproc = myproc();  //initialize current process
   int turnaroundT;
   int waitT;
+  int i = 0;
+
+  cnt++;
+  if(cnt <= 3) {
+    for(i = (32 * (cnt-1)); i < (32 + (32 * (cnt-1))); i++) {
+      if(i <= numTickets) {
+        curproc->arrTickets[i] = 1;
+      }
+      else {
+        curproc->arrTickets[i] = 0;
+      }
+      total++;
+    }
+  }
+  cprintf("\n%d\n", cnt);
+
+  if(cnt == 3) {
+    cprintf("\nArray: ");
+    for(i = 0; i < 95; i++) {
+      cprintf("%d ", curproc->arrTickets[i]);
+    }
+    cprintf("1112222222222222");
+    wticket = randomrange(0, total-1);
+    cprintf("111111111111111");
+    while(curproc->arrTickets[wticket] == 0) {
+      cprintf("1113333333333333");
+      wticket = randomrange(0, total-1);
+    }
+    cprintf("\nTicket: %d\n", wticket);
+    if(wticket >= 0 && wticket <= 31) {
+      cprintf("\nSelected process is 1\n");
+    }
+    else if(wticket >= 32 && wticket <= 63) {
+      cprintf("\nSelected process is 2\n");
+    }
+    else if(wticket >= 64 && wticket <= 95) {
+      cprintf("\nSelected process is 3\n");
+    }
+    cnt = 0;
+  }
 
   acquire(&tickslock);  //Lock tick count
   curproc->endT = ticks;
@@ -501,6 +575,20 @@ void prntTime(void) {
 }
 //added******************************************************************************
 
+/*int lottery_Total(void){
+  struct proc *p;
+  int ticket_aggregate=0;
+
+//loop over process table and increment total tickets if a runnable process is found 
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+    if(p->state==RUNNABLE){
+      ticket_aggregate+=p->tickets;
+    }
+  }
+  return ticket_aggregate;          // returning total number of tickets for runnable processes
+}*/
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -509,159 +597,79 @@ void prntTime(void) {
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
-/*void
-scheduler(void)
-{
-  struct proc *p;
-  struct cpu *c = mycpu();
-  c->proc = 0;
-  
-  for(;;){
-    // Enable interrupts on this processor.
-    sti();
-
-    // Loop over process table looking for process to run.
-    acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
-
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
-
-      swtch(&(c->scheduler), p->context);
-      switchkvm();
-
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
-    }
-    release(&ptable.lock);
-
-  }
-}*/
-
-//changed*******************************************
-//priority ranging from 0-31; 0 is highest and 31 is lowest
 void
 scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
-  c->proc = 0;
-  int maxprior = 31; //the range of blocks for a stack is 0-31; review CS161
-  
+  //int foundproc = 1;
+  int count = 0;
+  long golden_ticket = 0;
+  int total_no_tickets = 0;
+  int burst = 0;
+
   for(;;){
     // Enable interrupts on this processor.
     sti();
 
+    //if (!foundproc) hlt();
+    //foundproc = 0;
+
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
 
-    //added********************************
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
-      //unless priorVal is 31, the maximum priority level will change to that of priorVal
-      //maxprior also keeps decreasing until it reaches the lowest possible value of priorVal
-      if (maxprior > p->priorVal)
-        maxprior = p->priorVal;
+    //resetting the variables to make scheduler start from the beginning of the process queue
+    golden_ticket = 0;
+    count = 0;
+    total_no_tickets = 0;
+    
+    //calculate Total number of tickets for runnable processes  
+    int ticket_aggregate=0;
+
+    //loop over process table and increment total tickets if a runnable process is found 
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+    {
+      if(p->state==RUNNABLE){
+        ticket_aggregate+=p->tickets;
+      }
     }
-    //added********************************
+    total_no_tickets = ticket_aggregate;
+
+    //pick a random ticket from total available tickets
+    golden_ticket = randomrange(0, total_no_tickets);
 
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
 
-      if (p->priorVal == maxprior) {  //added********
-        // Switch to chosen process.
-        c->proc = p;
-        switchuvm(p);
-        p->state = RUNNING;
-
-        p->burstT++;  //increment the number of seconds the given process runs
-
-        swtch(&(c->scheduler), p->context);
-        switchkvm();
-        c->proc = 0;
-
-        //added********
-        if (p->priorVal >= 0 && p->priorVal < 31) {
-          p->priorVal++; //moving down one level
-        } 
-        else {
-          p->priorVal = 31; //keep in range
-        }
-        //added********
+      //find the process which holds the lottery winning ticket 
+      if ((count + p->tickets) < golden_ticket){
+        count += p->tickets;
+        continue;
       }
-      else {  //added********
-        if (p->priorVal > 0 && p->priorVal < 32) {
-          p->priorVal--;  //moving up one level
-                          //keep decrementing until we the highest priority since zero is the highest
-        } 
-        else {
-          p->priorVal = 0; //keep in range
-        }
-      }
+
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      //foundproc = 1;
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+      burst = ticks;
+                swtch(&(c->scheduler), p->context);
+                switchkvm();
+
+                // Process is done running for now.
+                // It should have changed its p->state before coming back.
+                c->proc = 0;
+
+                burst = ticks - burst;
+                p->burstT += burst;
+      break;
     }
     release(&ptable.lock);
-
   }
 }
-
-/*void
-scheduler(void)
-{
-  struct proc *p;
-  struct proc *loop_proc;
-  struct cpu *c = mycpu();
-  c->proc = 0;
-  struct proc *maxproc;
-
-  for(;;){
-    // Enable interrupts on this processor.
-    sti();
-
-    // Loop over process table looking for process to run.
-    acquire(&ptable.lock);
-
-    //added********************************
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      maxproc = p;
-      if(p->state != RUNNABLE)
-        continue;
-
-      for(loop_proc = ptable.proc; loop_proc < &ptable.proc[NPROC]; loop_proc++){
-        if(loop_proc->state != RUNNABLE)
-          continue;
-
-        if(maxproc->priorVal > loop_proc->priorVal) 
-          maxproc = loop_proc;
-        else
-          loop_proc->priorVal = (loop_proc->priorVal - 1);
-      }    
-        p = maxproc;
-        c->proc = p;
-        switchuvm(p);
-        p->state = RUNNING;
-
-        p->burstT++;  //increment the number of seconds the given process runs
-        p->priorVal = (p->priorVal + 1);
-
-        swtch(&(c->scheduler), p->context);
-        switchkvm();
-        c->proc = 0;
-
-    }
-    release(&ptable.lock);
-
-  }
-}*/
-//changed*******************************************
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores

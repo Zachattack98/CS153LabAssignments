@@ -55,6 +55,8 @@ struct proc {
   int startT;                   //Time intervals involved with
   int burstT;                   //printing turnaround time
   int endT;                     //during a priority schedule.
+  int tickets;
+  int arrTickets[96];
   //added****
 };
 

@@ -112,7 +112,7 @@ int             waitpid(int, int*, int);
 //****************************************
 void            setPriority(int); //added
 void            prior_scheduler(void); //added
-void            prntTime(void); //added
+void            prntTime(int); //added
 //****************************************
 int             fork(void);
 int             growproc(int);

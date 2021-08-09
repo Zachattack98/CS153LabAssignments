@@ -9,7 +9,8 @@ int wait2(int*);
 int waitpid(int, int*, int);
 //****************************************
 void setPrior(int);     //added
-void printTime(void);       //added
+void printTime(int);       //added
+void chooseLotto(int); //added
 //****************************************
 int wait(void);
 int pipe(int*);
