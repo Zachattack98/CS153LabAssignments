@@ -492,11 +492,14 @@ void setPriority(int procNum, int prior) {
 }
 
 //printing Turnaround time; arrival time for all processes is set to zero
+//Bonus 3
 void prntTime(void) {
   struct proc *curproc = myproc();  //initialize current process
   int turnaroundT;
   int waitT;
 
+  //after assigning start time with ticks, more ticks are added
+  //the cumulated number of ticks of ticks is assigned to end time
   acquire(&tickslock);  //Lock tick count
   curproc->endT = ticks;
   release(&tickslock);  //Unlock tick count

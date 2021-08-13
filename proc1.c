@@ -8,6 +8,7 @@ int main(int argc, char *argv[]) {
 
     int i, j;
     for(i = 0; i < 4500; i++) {
+        //NOP means no operation, i.e. do not change the process's state
         asm("nop"); //assembly instruction to do nothing
         for(j = 0; j < 4500; j++) {
             asm("nop");
@@ -15,5 +16,5 @@ int main(int argc, char *argv[]) {
     }
     printf(1, "\nProcess 1 finished! - ");
     printTime();
-    exitStats(0);
+    exitStats(0);//exit current process
 }

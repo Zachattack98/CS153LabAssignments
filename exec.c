@@ -101,10 +101,12 @@ exec(char *path, char **argv)
   curproc->tf->esp = sp;
 
   //added*********************
+  //before implementing aqcuire, a number of ticks have accumulated
+  //once acquire is typed, we can add THOSE accumulated ticks to starting time
   acquire(&tickslock); //Lock content so we can increment or assign
   curproc->startT = ticks;
   curproc->burstT = 0;
-  release(&tickslock); //Unlcok content
+  release(&tickslock); //Unlock content
   //added*********************
 
   switchuvm(curproc);
