@@ -101,10 +101,10 @@ exec(char *path, char **argv)
   curproc->tf->esp = sp;
 
   //added*********************
-  acquire(&tickslock);
+  acquire(&tickslock); //Lock content so we can increment or assign
   curproc->startT = ticks;
   curproc->burstT = 0;
-  release(&tickslock);
+  release(&tickslock); //Unlcok content
   //added*********************
 
   switchuvm(curproc);

@@ -16,6 +16,7 @@ static struct proc *initproc;
 
 int nextpid = 1;
 int ageRun = 0, ageWait = 0; //added
+//int R1 = 0, W1 = 0, W2 = 0, Wvalid = 1;
 extern void forkret(void);
 extern void trapret(void);
 
@@ -505,7 +506,10 @@ void prntTime(void) {
   waitT = turnaroundT - curproc->burstT;
 
   cprintf("\nStart: %d    End: %d    Burst: %d\n", curproc->startT, curproc->endT, curproc->burstT);
-  cprintf("Turnaround: %d    Waiting: %d\n", turnaroundT, waitT);
+  cprintf("Turnaround: %d    Waiting: %d\n\n", turnaroundT, waitT);
+
+  //cprintf("%d times this process runs     -> Process is running and priority has incremented\n\n", R1);  //does work
+  //cprintf("%d - %d = %d wait time saved   -> Process is waiting and priority has decremented\n\n", W1, W2, (W1 - W2));  //does work
   
   release(&ptable.lock);  //Unlock content
 
@@ -590,6 +594,7 @@ scheduler(void)
       if(p->state != RUNNABLE)
         continue;
 
+      //running process
       if (p->priorVal == maxprior) {  //added********
         // Switch to chosen process.
         c->proc = p;
@@ -605,6 +610,9 @@ scheduler(void)
         //added********
         if (p->priorVal >= 0 && p->priorVal < 31) {
           p->priorVal++; //moving down one level
+
+          //R1++; //does work; incrementing running time while ALL processes run, shows total number of seconds passed once a process finished
+
           if(runValid) { //only implement once to prove processes that run increment their priority values
             ageRun++;
             //cprintf("\n1111111111\n" );
@@ -615,25 +623,39 @@ scheduler(void)
         else {
           p->priorVal = 31; //keep in range
         }
+
         //added********
       }
       //added********
-      //age waiting processes to reduce starvation
+      //waiting process; age waiting processes to reduce starvation
       else {
         if (p->priorVal > 0 && p->priorVal < 32) {
           p->priorVal--;  //moving up one level
                           //keep decrementing until the highest priority since zero is the highest
+
+          //W1++; //does work; one least is process is waiting then increment 
+
           if(waitValid) { //only implement once to prove processes that wait decrement their priority values
             ageWait++;
             //cprintf("\n222222222\n");
             //cprintf("????????? %d   %d", p->ageWait, p->priorVal);
             waitValid = 0;
           }
+
+          //Wvalid = 0;
+
         } 
         else {
           p->priorVal = 0; //keep in range
         }
       }
+
+      /*if(Wvalid) {
+        W2++;   //increment if the statement for aging of waiting process did not exist
+      }
+      Wvalid = 1;*/
+
+
       //added********
     }
     release(&ptable.lock);
