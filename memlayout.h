@@ -8,6 +8,12 @@
 #define KERNBASE 0x80000000         // First kernel virtual address
 #define KERNLINK (KERNBASE+EXTMEM)  // Address where kernel is linked
 
+//******added
+#define KERNADDRSP (KERNBASE - 1)   // able to map pages the kernal address space.
+                                    // since we cannot allocate memory at KERNBASE
+                                    // we provide KERNBASE-1.
+//******added
+
 #define V2P(a) (((uint) (a)) - KERNBASE)
 #define P2V(a) ((void *)(((char *) (a)) + KERNBASE))
 
