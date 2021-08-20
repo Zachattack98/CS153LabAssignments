@@ -109,11 +109,9 @@ void            exitStats(int);
 int             wait(void);
 int             wait2(int*);
 int             waitpid(int, int*, int);
-//****************************************
-void            setPriority(int, int); //added
-void            prior_scheduler(void); //added
-void            prntTime(void); //added
-//****************************************
+void            setPriority(int, int);
+void            prior_scheduler(void);
+void            prntTime(void);
 int             fork(void);
 int             growproc(int);
 int             kill(int);
@@ -188,7 +186,9 @@ int             deallocuvm(pde_t*, uint, uint);
 void            freevm(pde_t*);
 void            inituvm(pde_t*, char*, uint);
 int             loaduvm(pde_t*, char*, struct inode*, uint, uint);
-pde_t*          copyuvm(pde_t*, uint);
+//changed*******
+pde_t*          copyuvm(pde_t*, uint, uint);
+//changed*******
 void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);

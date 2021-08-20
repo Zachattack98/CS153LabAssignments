@@ -50,11 +50,12 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   int exitStatus;               //Term for storing/saving an exit status of the terminated process
-  //added****
   int priorVal;                 //Variable for storing the priority value.
   int startT;                   //Time intervals involved with
   int burstT;                   //printing turnaround time
   int endT;
+  //added****
+  uint SzofStack;               //Variable for storing the size of the stack
   //added****
 };
 
