@@ -338,9 +338,9 @@ copyuvm(pde_t *pgdir, uint sz, uint szStack)
     }
 
   //*****added this additional loop that iterates over the stack page(s)
-  //looping through each stack page; up until the bottom (szStack = 0); decrementing the page size and stack size in the process
+  //looping through each stack page starting from the top, plus 1; up until the bottom (szStack = 0); decrementing the page size and stack size in the process
   //similar content as above for loop
-    for(i = STACKTOP - (PGSIZE + 1); szStack > 0; i -= PGSIZE, szStack--){
+    for(i = STACKTOP - PGSIZE + 1; szStack > 0; i -= PGSIZE, szStack--){
       if((pte = walkpgdir(pgdir, (void *) i, 0)) == 0)
         panic("copyuvm: pte should exist");
       if(!(*pte & PTE_P))

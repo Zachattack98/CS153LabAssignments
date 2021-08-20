@@ -106,6 +106,9 @@ exec(char *path, char **argv)
   oldpgdir = curproc->pgdir;
   curproc->pgdir = pgdir;
   curproc->sz = sz;
+
+  curproc->SzofStack = 1;   //****added; counter for SzofStack starts with a stack of one page
+
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
 
