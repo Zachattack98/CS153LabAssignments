@@ -9,9 +9,8 @@
 #define KERNLINK (KERNBASE+EXTMEM)  // Address where kernel is linked
 
 //******added
-#define KERNADDRSP (KERNBASE - 1)   // able to map pages the kernal address space.
-                                    // since we cannot allocate memory at KERNBASE
-                                    // we provide KERNBASE-1.
+#define STACKTOP (KERNBASE - 1)     // since we cannot allocate memory at KERNBASE, we provide KERNBASE-1.
+                                    // top page of the user part of the memory is right under KERNBASE.
 //******added
 
 #define V2P(a) (((uint) (a)) - KERNBASE)
