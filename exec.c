@@ -104,11 +104,11 @@ exec(char *path, char **argv)
 
   // Commit to the user image.
   oldpgdir = curproc->pgdir;
+  //****added
+  curproc->SzofStack = 1;   // counter for SzofStack starts with a stack of one page
+  //****added
   curproc->pgdir = pgdir;
   curproc->sz = sz;
-
-  curproc->SzofStack = 1;   //****added; counter for SzofStack starts with a stack of one page
-
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
 

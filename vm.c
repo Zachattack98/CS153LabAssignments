@@ -332,31 +332,29 @@ copyuvm(pde_t *pgdir, uint sz, uint szStack)
     if((mem = kalloc()) == 0)
       goto bad;
     memmove(mem, (char*)P2V(pa), PGSIZE); //copies the page from the parent memory to the new page
-    if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0) {
-      kfree(mem);
+    if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0) 
+      //kfree(mem);
       goto bad;
-    }
+  }
 
-  //*****added this additional loop that iterates over the stack page(s)
+  //*****added this additional loop that iterates over the stack page(s), i.e. iterate new position of task
   //looping through each stack page starting from the top, plus 1; up until the bottom (szStack = 0); decrementing the page size and stack size in the process
   //similar content as above for loop
-    for(i = STACKTOP - PGSIZE + 1; szStack > 0; i -= PGSIZE, szStack--){
-      if((pte = walkpgdir(pgdir, (void *) i, 0)) == 0)
-        panic("copyuvm: pte should exist");
-      if(!(*pte & PTE_P))
-        panic("copyuvm: page not present");
-      pa = PTE_ADDR(*pte);
-      flags = PTE_FLAGS(*pte);
-      if((mem = kalloc()) == 0)
-        goto bad;
-      memmove(mem, (char*)P2V(pa), PGSIZE); //copies the page from the parent memory to the new page
-      if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0) {
-        kfree(mem);
-        goto bad;
-    }
-  //*******************************************************
-
+  for(i = STACKTOP - PGSIZE + 1; szStack > 0; i -= PGSIZE, szStack--){
+    if((pte = walkpgdir(pgdir, (void *) i, 0)) == 0)
+      panic("copyuvm: pte should exist");
+    if(!(*pte & PTE_P))
+      panic("copyuvm: page not present");
+    pa = PTE_ADDR(*pte);
+    flags = PTE_FLAGS(*pte);
+    if((mem = kalloc()) == 0)
+      goto bad;
+    memmove(mem, (char*)P2V(pa), PGSIZE); //copies the page from the parent memory to the new page
+    if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0)
+      //kfree(mem);
+      goto bad;
   }
+  //*******************************************************
   return d;
 
 bad:

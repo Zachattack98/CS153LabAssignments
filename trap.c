@@ -13,6 +13,7 @@ struct gatedesc idt[256];
 extern uint vectors[];  // in vectors.S: array of 256 entry pointers
 struct spinlock tickslock;
 uint ticks;
+//int pgftCnt = 0;  //******added; counter of number of page faults
 
 void
 tvinit(void)
@@ -77,24 +78,28 @@ trap(struct trapframe *tf)
             cpuid(), tf->cs, tf->eip);
     lapiceoi();
     break;
-  //********added test case for page fault
+  //********added; test case for page fault
   case T_PGFLT:
-    cprintf("Page fault\n");
+    cprintf("Page fault!!\n");
+
     // check to see if fault address (rcr2) is from right under current bottom of stack
     // if yes, grow stack
-    if ((rcr2() >= (STACKTOP - (myproc()->SzofStack * PGSIZE)))) {
+    //if ((rcr2() >= (STACKTOP - (myproc()->SzofStack * PGSIZE)))) {
+    if (rcr2() >= (STACKTOP - (((myproc()->SzofStack + 1) * PGSIZE) + 1))) { 
       cprintf("New page allocation start\n");
       // allocvum with correct parameters to allocate one page at the right place
       // first addr slot under kernbase; last addr page of what we are mapping
-      if (allocuvm(myproc()->pgdir, STACKTOP - ((myproc()->SzofStack) * PGSIZE), STACKTOP - ((myproc()->SzofStack + 1) * PGSIZE)) == 0) {
+      //if (allocuvm(myproc()->pgdir, STACKTOP - ((myproc()->SzofStack) * PGSIZE), STACKTOP - ((myproc()->SzofStack + 1) * PGSIZE)) == 0) {
+      if (allocuvm(myproc()->pgdir, PGROUNDDOWN(rcr2()), PGROUNDDOWN(rcr2()) + 8) == 0) {
         cprintf("Error occurred in allocuvm for allocating page!\n");
         break;
       }
       myproc()->SzofStack++; // increment stack size counter 
       cprintf("Page allocation complete!\n");
     }
+    cprintf("Number of allocated pages: %d\n\n", myproc()->SzofStack);
     break;
-  //********
+  //********added
 
   //PAGEBREAK: 13
   default:

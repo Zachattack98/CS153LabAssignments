@@ -23,7 +23,7 @@ main(int argc, char *argv[])
 
   // output the pointer type data of the # of arguments (argc)
   // check whether or not the modifications to tha address space are correct
-  printf(1, "%p\n", &k);
+  printf(1, "Pointer type: %p\n", &k);
 
   if(argc != 2){
     printf(1, "Usage: %s levels\n", argv[0]);
@@ -31,7 +31,7 @@ main(int argc, char *argv[])
   }
 
   n = atoi(argv[1]);
-  printf(1, "Lab 3: Recursing %d levels\n", n);
+  printf(1, "Lab 3: Recursing %d levels\n\n", n);
   m = recurse(n);
   printf(1, "Lab 3: Yielded a value of %d\n", m);
   exit();
