@@ -173,6 +173,7 @@ UPROGS=\
 	_grep\
 	_init\
 	_kill\
+	-lab3_test\
 	_ln\
 	_ls\
 	_mkdir\
