@@ -26,7 +26,12 @@ main(int argc, char *argv[])
   printf(1, "Pointer type: %p\n", &k);
 
   if(argc != 2){
-    printf(1, "Usage: %s levels\n", argv[0]);
+    if(argc == 1) {
+      printf(1, "Error!! No applicable levels inputted!");
+    }
+    else {
+      printf(1, "Usage: %s levels\n", argv[0]);
+    }
     exit();
   }
 

@@ -80,24 +80,47 @@ trap(struct trapframe *tf)
     break;
   //********added; test case for page fault
   case T_PGFLT:
-    cprintf("Page fault!!\n");
+    //cprintf("Page fault!!\n");
 
     // check to see if fault address (rcr2) is from right under current bottom of stack
     // if yes, grow stack
-    //if ((rcr2() >= (STACKTOP - (myproc()->SzofStack * PGSIZE)))) {
     if (rcr2() >= (STACKTOP - (((myproc()->SzofStack + 1) * PGSIZE) + 1))) { 
       cprintf("New page allocation start\n");
       // allocvum with correct parameters to allocate one page at the right place
       // first addr slot under kernbase; last addr page of what we are mapping
-      //if (allocuvm(myproc()->pgdir, STACKTOP - ((myproc()->SzofStack) * PGSIZE), STACKTOP - ((myproc()->SzofStack + 1) * PGSIZE)) == 0) {
-      if (allocuvm(myproc()->pgdir, PGROUNDDOWN(rcr2()), PGROUNDDOWN(rcr2()) + 8) == 0) {
+      if (allocuvm(myproc()->pgdir, PGROUNDDOWN(rcr2()), PGROUNDDOWN(rcr2()) + PGSIZE) == 0) {
         cprintf("Error occurred in allocuvm for allocating page!\n");
         break;
       }
       myproc()->SzofStack++; // increment stack size counter 
       cprintf("Page allocation complete!\n");
     }
-    cprintf("Number of allocated pages: %d\n\n", myproc()->SzofStack);
+    cprintf("Number of allocated pages: %d\n", myproc()->SzofStack);
+
+    cprintf("pid %d    %s: page fault on %d     eip 0x%x     ", myproc()->pid, myproc()->name, mycpu()->apicid, tf->eip);
+		cprintf("stack 0x%x     sz 0x%x     addr 0x%x\n\n", myproc()->SzofStack, myproc()->sz, rcr2());
+
+    /*uint f = rcr2();
+    if (f >KERNBASE-1){
+	  cprintf("from trap access > KERNBASE");
+	  exit();
+	}
+    f = PGROUNDDOWN(f);
+    if (allocuvm(myproc()->pgdir, f, f + PGSIZE) == 0) {
+      cprintf("'''''''allocuvm failed. Number of current allocated pages: %d\n", myproc()->SzofStack);
+      exit();
+    }
+    myproc()->SzofStack++;
+    cprintf("!!!!!!!!allocuvm succeeded. Number of pages allocated: %d\n", myproc()->SzofStack);*/
+
+    /*if(growstack(myproc()->pgdir, myproc()->tf->esp, myproc()->SzofStack) == 0)
+				break;
+			cprintf("pid %d %s: page fault on %d eip 0x%x ",myproc()->pid, myproc()->name, mycpu()->apicid, tf->eip);
+			cprintf("stack 0x%x sz 0x%x addr 0x%x\n", myproc()->SzofStack, myproc()->sz, rcr2());
+			if(myproc()->tf->esp > myproc()->sz)
+				deallocuvm(myproc()->pgdir, STACKTOP, myproc()->SzofStack);
+
+			myproc()->killed = 1;*/
     break;
   //********added
 

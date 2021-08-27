@@ -73,8 +73,6 @@ sys_waitpid(void)
   return waitpid(pid, waitStat, options);  //returning pointer after using it as a parameter
 }
 
-
-//added***************************************
 int sys_setPriority(void) {
   int priorNum;
   int priorStat;
@@ -92,7 +90,6 @@ int sys_printTime(void) {
   prntTime();
   return 0;
 }
-//added***************************************
 
 
 int

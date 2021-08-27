@@ -31,7 +31,7 @@ fetchint(uint addr, int *ip)
   //struct proc *curproc = myproc();  //unneccesary line since we now have a variable in memlayout.h 
                                       //for locating the stack beginning at the top of the user address space (STACKTOP)
 
-  if(addr >= STACKTOP || addr+4 > STACKTOP)
+  if(addr >= STACKTOP || addr+4 > STACKTOP)  //****changed
     return -1;
   *ip = *(int*)(addr);
   return 0;
@@ -47,7 +47,7 @@ fetchstr(uint addr, char **pp)
   //struct proc *curproc = myproc();
 
   //if(addr >= curproc->sz)
-  if(addr >= STACKTOP || addr+4 > STACKTOP)
+  if(addr >= STACKTOP || addr+4 > STACKTOP)  //****changed
     return -1;
   *pp = (char*)addr;
   //ep = (char*)curproc->sz;
@@ -78,7 +78,7 @@ argptr(int n, char **pp, int size)
   if(argint(n, &i) < 0)
     return -1;
   //if(size < 0 || (uint)i >= curproc->sz || (uint)i+size > curproc->sz)
-  if(size < 0 || (uint)i >= STACKTOP || (uint)i+size > STACKTOP)
+  if(size < 0 || (uint)i >= STACKTOP || (uint)i+size > STACKTOP)  //****changed
     return -1;
   *pp = (char*)i;
   return 0;
@@ -106,8 +106,8 @@ extern int sys_exitStats(void);
 extern int sys_wait(void);
 extern int sys_wait2(void);
 extern int sys_waitpid(void);
-extern int sys_setPriority(void); //added
-extern int sys_printTime(void);   //added
+extern int sys_setPriority(void);
+extern int sys_printTime(void);
 extern int sys_fork(void);
 extern int sys_fstat(void);
 extern int sys_getpid(void);
@@ -131,8 +131,8 @@ static int (*syscalls[])(void) = {
 [SYS_exitStats] sys_exitStats,
 [SYS_wait2]   sys_wait2,
 [SYS_waitpid] sys_waitpid,
-[SYS_setPrior] sys_setPriority, //added
-[SYS_printTime] sys_printTime,  //added
+[SYS_setPrior] sys_setPriority,
+[SYS_printTime] sys_printTime,
 [SYS_pipe]    sys_pipe,
 [SYS_read]    sys_read,
 [SYS_kill]    sys_kill,
