@@ -269,7 +269,6 @@ exit(void)
 }
 
 // Exit status is now saved for later use
-//added*****************************************************
 void
 exitStats(int status)
 {
@@ -315,7 +314,6 @@ exitStats(int status)
   sched();
   panic("zombie exit");
 }
-//added*****************************************************
 
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
@@ -463,7 +461,6 @@ int waitpid(int wtpid, int *status, int options) {
   }
 }
 
-//added******************************************************************************
 void setPriority(int procNum, int prior) {
   struct proc *curproc = myproc();  //initialize current process
   acquire(&ptable.lock);  //Lock content to modify curproc->priorVal
@@ -519,7 +516,6 @@ void prntTime(void) {
   release(&ptable.lock);  //Unlock content
 
 }
-//added******************************************************************************
 
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
@@ -565,7 +561,6 @@ scheduler(void)
   }
 }*/
 
-//changed*******************************************
 int waitValid = 1;
 int runValid = 1;
 //priority ranging from 0-31; 0 is highest and 31 is lowest
@@ -584,7 +579,6 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
 
-    //added********************************
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -593,14 +587,13 @@ scheduler(void)
       if (maxprior > p->priorVal)
         maxprior = p->priorVal;
     }
-    //added********************************
 
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
 
       //running process
-      if (p->priorVal == maxprior) {  //added********
+      if (p->priorVal == maxprior) {
         // Switch to chosen process.
         c->proc = p;
         switchuvm(p);
@@ -612,7 +605,6 @@ scheduler(void)
         switchkvm();
         c->proc = 0;
 
-        //added********
         if (p->priorVal >= 0 && p->priorVal < 31) {
           p->priorVal++; //moving down one level
 
@@ -629,9 +621,8 @@ scheduler(void)
           p->priorVal = 31; //keep in range
         }
 
-        //added********
       }
-      //added********
+
       //waiting process; age waiting processes to reduce starvation
       else {
         if (p->priorVal > 0 && p->priorVal < 32) {
@@ -660,16 +651,12 @@ scheduler(void)
       }
       Wvalid = 1;*/
 
-
-      //added********
     }
     release(&ptable.lock);
 
   }
 }
-//changed*******************************************
 
-//changed*******************************************
 /*void
 scheduler(void)
 {
@@ -686,7 +673,6 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
 
-    //added********************************
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       maxproc = p;
       if(p->state != RUNNABLE)
@@ -718,7 +704,6 @@ scheduler(void)
 
   }
 }*/
-//changed*******************************************
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores

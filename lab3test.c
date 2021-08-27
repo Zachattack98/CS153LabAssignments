@@ -27,7 +27,7 @@ main(int argc, char *argv[])
 
   if(argc != 2){
     if(argc == 1) {
-      printf(1, "Error!! No applicable levels inputted!");
+      printf(1, "Error!! No applicable levels inputted!\n");
     }
     else {
       printf(1, "Usage: %s levels\n", argv[0]);

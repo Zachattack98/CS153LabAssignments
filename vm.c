@@ -313,7 +313,7 @@ clearpteu(pde_t *pgdir, char *uva)
 // Given a parent process's page table, create a copy
 // of it for a child.
 pde_t*
-copyuvm(pde_t *pgdir, uint sz, uint szStack)
+copyuvm(pde_t *pgdir, uint sz, uint szStack) //added new parameter (szStack)
 {
   pde_t *d;
   pte_t *pte;
@@ -358,7 +358,7 @@ copyuvm(pde_t *pgdir, uint sz, uint szStack)
       //kfree(mem);
       goto bad;
   }
-  //*******************************************************
+  //*****added
   return d;
 
 bad:

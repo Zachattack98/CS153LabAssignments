@@ -47,7 +47,7 @@ fetchstr(uint addr, char **pp)
   //struct proc *curproc = myproc();
 
   //if(addr >= curproc->sz)
-  if(addr >= STACKTOP || addr+4 > STACKTOP)  //****changed
+  if(addr >= STACKTOP)  //****changed
     return -1;
   *pp = (char*)addr;
   //ep = (char*)curproc->sz;
